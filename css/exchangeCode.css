@@ -1,0 +1,108 @@
+
+#loaded {
+    opacity: 0;
+}
+
+.page {
+    position: absolute;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+}
+
+.pageExchange {
+    left: 0%;
+}
+
+.pageAddress {
+    left: 100%;
+}
+
+.inputHeader {
+    box-sizing: border-box;
+    position: relative;
+    padding: 1.2rem 8rem 1.2rem 1.2rem;
+}
+
+.inputBoxCon {
+    height: 3rem;
+    width: 100%;
+}
+
+.inputBox {
+    background-color: #f4f4f4;
+    height: 3rem;
+    width: 100%;
+    padding-left: 1rem;
+    margin: auto auto;
+    display: block;
+}
+
+.exchangeBtn {
+    box-sizing: border-box;
+    position: absolute;
+    width: 5rem;
+    height: 3rem;
+    line-height: 3rem;
+    text-align: center;
+    background-color: #3881e0;
+    top: 1.2rem;
+    right: 1rem;
+    border-radius: 0.5rem;
+    color: white;
+}
+
+.addressCon {
+    box-sizing: border-box;
+    padding: 1.5rem;
+}
+
+.addressTitle {
+    color: #444;
+    width: 25%;
+    display: inline-block;
+}
+
+.address {
+    display: inline-block;
+    text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 45%;
+    transform: translateY(0.26rem);
+}
+
+.addressAdd {
+    display: inline-block;
+    width: 30%;
+    text-align: right;
+    color: #3881e0;
+    font-weight: bold;
+}
+
+/**/
+.prizeCon {
+    box-sizing: border-box;
+    padding: 1.5rem;
+}
+
+.prizeTitle {
+    color: #444;
+}
+
+.nodata {
+    display: block;
+    margin: 3rem auto 0;
+}
+
+.bottomDeclaration{
+    position: absolute;
+    bottom: 0rem;
+    box-sizing: border-box;
+    padding:1rem  1.5rem;
+    background-color: #f4f4f4;
+    width: 100%;
+    height: 5rem;
+}

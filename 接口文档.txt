@@ -1,0 +1,21 @@
+http://n1.jimi.la/apps_T1/CheckExchangeCode.php
+uid:true
+ecode:true
+验证兑换码接口
+返回结果如下：
+jsonpcallback({"status":"0","id":"0"})uid ecode 兑换码错误
+jsonpcallback({"status":"2","id":"x"})只传uid 该用户已领取兑换码   兑换码被领返回id
+jsonpcallback({"status":"1","id":"x"})uid ecode 成功 该用户可以用该兑换码
+jsonpcallback({"status":"3","id":"x"})只传uid 该用户未领取兑换码
+jsonpcallback({"status":"4","id":"x"})uid ecode 兑换码已领取
+
+
+http://n1.jimi.la/apps_T1/postExchangeCodeReceiverInfo.php
+id:true
+uid:true
+mobile:true
+uname:true
+address:true
+兑换码保存收货人信息
+jsonpcallback({"status":"0"}) 失败
+jsonpcallback({"status":"1"}) 成功

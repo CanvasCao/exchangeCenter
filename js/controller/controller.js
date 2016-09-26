@@ -6,26 +6,25 @@
 
     controller.ifAjaxing = false;
 
-    controller.getExchangeCode = function (code, callback) {
+    controller.checkExchangeCode = function (data, callback) {
 
-        alert('兑换码不正确');
-//        $.ajax({
-//            type: "post",
-//            url: 'http://n1.jimi.la/apps_TN/getExchangeCode.php',
-////                url: 'package.json',
-//            data: {exchangeCode:code},
-//            dataType: "jsonp",
-//            jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
-//            jsonpCallback: "jsonpcallback",
-//            success: function (data) {
-//                console.log(JSON.stringify(data));
-//            },
-//            error: function (err) {
-//                console.log('ERROR!');
-//                console.log(err);
-//
-//            }
-//        });
+        $.ajax({
+            type: "post",
+            url: jimiHost + '/checkExchangeCode.php',
+//                url: 'package.json',
+            data: data,
+            dataType: "jsonp",
+            jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+            jsonpCallback: "jsonpcallback",
+            success: function (json) {
+                console.log(JSON.stringify(json));
+                callback(json);
+            },
+            error: function (err) {
+                console.log('ERROR!');
+                console.log(err);
+            }
+        });
     };
 
     w.controller = controller;

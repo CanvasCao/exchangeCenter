@@ -6,96 +6,44 @@
           content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
     <title>兑换中心</title>
     <link rel="stylesheet" href="css/main.css"/>
-    <style>
-        .inputHeader {
-            box-sizing: border-box;
-            position: relative;
-            padding: 20px 100px 20px 20px;
-
-        }
-
-        .inputBoxCon {
-            height: 40px;
-            width: 100%;
-        }
-
-        .inputBox {
-            background-color: #f4f4f4;
-            height: 40px;
-            width: 100%;
-            padding-left: 10px;
-            margin: auto auto;
-            display: block;
-        }
-
-        .exchangeBtn {
-            box-sizing: border-box;
-            position: absolute;
-            width: 60px;
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
-            background-color: #3881e0;
-            top: 20px;
-            right: 15px;
-            border-radius: 5px;
-            color: white;
-        }
-
-        .addressCon {
-            box-sizing: border-box;
-            padding: 15px;
-        }
-
-        .addressTitle {
-            color: #444;
-        }
-
-        /**/
-        .priceCon {
-            box-sizing: border-box;
-            padding: 15px;
-        }
-
-        .priceTitle {
-            color: #444;
-        }
-
-        .nodata {
-            display: block;
-            margin: 30px auto 0;
-        }
-    </style>
+    <link rel="stylesheet" href="css/exchangeCode.css"/>
 </head>
 <body>
-<div class='inputHeader'>
-    <div class='inputBoxCon'>
-        <input type="text" placeholder="请输入兑换码" class='inputBox'/>
+<div id='loading'></div>
+<div id='loaded'>
+    <div class='page pageExchange'>
+        <div class='inputHeader'>
+            <div class='inputBoxCon'>
+                <input type="text" placeholder="请输入兑换码" class='inputBox'/>
+            </div>
+            <span class='exchangeBtn'>兑换</span>
+        </div>
+        <div style='height:2px;background: #f4f4f4'></div>
+        <div class='addressCon'>
+            <span class='addressTitle'>我的地址</span><span class='address'></span><span class='addressAdd'></span>
+        </div>
+        <div style='height: 15px;background: #f4f4f4'></div>
+        <div class='prizeCon'>
+            <div class='prizeTitle'>我的奖品</div>
+            <div class='prizeContent'></div>
+        </div>
+        <div class='bottomDeclaration'>声明：一个账号只能兑换一个兑换码</div>
     </div>
-    <span class='exchangeBtn'>兑换</span>
+    <div class='page pageAddress'>123123
+        <div class='addressSave'>save</div>
+    </div>
 </div>
-<div style='height:2px;background: #f4f4f4'></div>
-<div class='addressCon'>
-    <div class='addressTitle'>我的奖品</div>
-</div>
-<div style='height: 15px;background: #f4f4f4'></div>
-<div class='priceCon'>
-    <div class='priceTitle'>我的地址</div>
-    <img src="img/nodata.jpg" class='nodata' width="80%"/>
-
-    <div style="text-align: center;color: #444">暂无获奖记录</div>
-</div>
-
 
 <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src='js/tool/fastclick.js'></script>
 <script src='js/tool/RoshanBB.js'></script>
+<script src='js/tool/response.js'></script>
 <script src='js/tool/velocity.min.js'></script>
-<script src='js/tool/velocity.ui.js'></script>
 <script src="js/searchToJson/searchToJson.js"></script>
 <script src="js/globalManager/globalManager.js"></script>
 <script src='js/constant/jimiHost.js'></script>
 <script src='js/controller/controller.js'></script>
+<script src='js/class/jimiAlert.js'></script>
 <script>
     $(function () {
         if (!window.location.search) {
@@ -106,14 +54,77 @@
         FastClick.attach(document.body);
 
 
-        $('.exchangeBtn').click(function () {
-            var val = $('.inputBox').val();
-            if (val == '') {
-                alert('请输入兑换码');
-            } else {
-                controller.getExchangeCode(val, null)
+        //initAjax 根据uid判断这个人有没有兑换过....................................
+        controller.checkExchangeCode({uid: searchJson.uid}, function (json) {
+            $('#loaded').velocity({opacity: 1}, 'fast');
+
+            if (json.status == 2) {
+                GM.ifExchanged = true;
+                console.log('该用户已领取兑换码');
+                $('.prizeContent').html('<div style="text-align: center;color: #444">' + json.prizeeeee + '</div>');
+                $('.address').html(json.address);
+                $('.addressAdd').html('修改');
+                $('.inputBox').attr('placeholder', '您已兑换兑换码');
+                $('.exchangeBtn').css({'background': '#f4f4f4', color: '#aaa'});
             }
+            else if (json.status == 3) {
+                GM.ifExchanged = false;
+                console.log('该用户未领取兑换码');
+                $('.prizeContent').html('<img src="img/nodata.jpg" class="nodata" width="80%"/>' +
+                        '<div style="text-align: center;color: #444">暂无获奖记录</div>');
+                $('.addressAdd').html('+添加新地址');
+                $('.inputBox').attr('placeholder', '请输入兑换码');
+            }
+
+
+            //根据是否兑换字段 判断点击兑换逻辑.................................
+            if (GM.ifExchanged == false) {
+                $('.exchangeBtn').click(function () {
+                    var val = $('.inputBox').val();
+                    if (val == '') {
+                        alert({
+                            alertTxt: "兑换码不能为空",
+                            alertBtn: "返回",
+                        });
+                    } else {
+                        controller.checkExchangeCode({ecode: val, uid: searchJson.uid}, function (json) {
+                            if (json.status == 0) {//兑换码出错
+                                alert({
+                                    alertTitle: '兑换失败',
+                                    alertTxt: "兑换失败，无此兑换码",
+                                    alertBtn: "返回",
+                                });
+                            } else if (json.status == 4) {//兑换码已经被兑换
+                                alert({
+                                    alertTitle: '兑换失败',
+                                    alertTxt: "兑换失败，该兑换码已经被领取",
+                                    alertBtn: "返回",
+                                });
+                            }
+                        })
+                    }
+                });
+            }
+
+
+        });
+
+
+        //page router..................................................................
+        $addressAdd = $('.addressAdd');
+        $addressSave = $('.addressSave');
+        $pageExchange = $('.pageExchange');
+        $pageAddress = $('.pageAddress');
+        $addressAdd.click(function () {
+            $pageExchange.css({'left': '0%'}).velocity({'left': '-100%'}, 'fast')
+            $pageAddress.css({'left': '100%'}).velocity({'left': '0%'}, 'fast')
+        });
+
+        $addressSave.click(function () {
+            $pageExchange.css({'left': '-100%'}).velocity({'left': '0%'}, 'fast')
+            $pageAddress.css({'left': '0%'}).velocity({'left': '100%'}, 'fast')
         })
+
 
     })
 </script>
