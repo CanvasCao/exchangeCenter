@@ -7,6 +7,6 @@
     var GM = globalManager;
 
     GM.JM = GM.jQueryMap = {};
-
+    GM.emodel = GM.exchangeModel = {};
     w.GM = w.globalManager = globalManager;
 })(window, document, $);

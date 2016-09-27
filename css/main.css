@@ -14,7 +14,7 @@
     -ms-user-select: none;
     user-select: none;
 
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 input, button, select, textarea {
@@ -27,4 +27,6 @@ input, button, select, textarea {
     -webkit-user-select: text;
     -ms-user-select: text;
     user-select: text;
+    
+    background: white;
 }
