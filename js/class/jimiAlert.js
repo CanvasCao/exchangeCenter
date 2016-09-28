@@ -94,7 +94,7 @@
                 'font-size': '1.4rem',
                 color: 'white',
                 'box-sizing': 'border-box',
-                padding: '1rem 5rem',
+                padding: '1rem 1rem',
                 'line-height': '2.4rem',
 
             });

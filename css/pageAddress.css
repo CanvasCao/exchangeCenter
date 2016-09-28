@@ -1,12 +1,12 @@
 
 .addressRow {
     box-sizing: border-box;
-    padding: 0.4rem 1.5rem;
+    padding: 0.3rem 1.5rem;
     border-bottom: 1px solid #f4f4f4;
 }
 
 .addressRow input, .addressRow select {
-    height:3.8rem;
+    height:3.5rem;
 }
 
 .addressL {
@@ -38,7 +38,7 @@
     background: #f4f4f4;
     position: absolute;
     bottom: 0;
-    height: 5rem;
+    min-height: 5rem;
     font-size: 1rem;
     width: 100%;
     left: 0%;
@@ -47,7 +47,7 @@
 .btnRow {
     box-sizing: border-box;
     padding: 1rem 3rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 .addressBack, .addressSave {

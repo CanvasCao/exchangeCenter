@@ -5,7 +5,9 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
     <title>兑换中心</title>
+
     <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="css/loaderCss/loader.min.css"/>
     <link rel="stylesheet" href="css/page.css"/>
     <link rel="stylesheet" href="css/pageExchange.css"/>
     <link rel="stylesheet" href="css/pageAddress.css"/>
@@ -19,8 +21,24 @@
     </style>
 </head>
 <body>
-<div id='loading'></div>
-<div id='loaded'>
+
+<div id='loading'>
+    <div class="loader">
+        <div class="loader-inner ball-spin-fade-loader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class='loader-innerText'>loading...</div>
+    </div>
+</div>
+
+<div id='loaded' style='display: none;'>
     <div class='page pageExchange'>
         <div class='inputHeader'>
             <div class='inputBoxCon'>
@@ -36,9 +54,10 @@
         <div style='height: 15px;background: #f4f4f4'></div>
         <div class='prizeCon'>
             <div class='prizeTitle'>我的奖品</div>
-            <div class='prizeContent'></div>
+            <div class='prizeContent'>
+            </div>
         </div>
-        <div class='bottomDeclaration absoluteBottom'>声明：一个账号只能兑换一个兑换码</div>
+        <div class='bottomDeclaration absoluteBottom'>声明：每个账号只能兑换一份奖品<br>活动最终解释权归肌秘所有</div>
     </div>
     <div class='page pageAddress'>
         <div class='addressRow'>
@@ -72,9 +91,13 @@
             <span class='addressBack'>返回</span><span class='addressSave'>保存</span>
         </div>
 
-        <div class='addressBottom absoluteBottom'>系统发货后地址将不可修改，如有问题请联系客服，<br>客服电话：3561-5689</div>
+        <div class='addressBottom absoluteBottom'>系统提示发货后地址将不可修改，普通快递不到的偏远地区不发货。<br>
+            如有任何问题请联系微信公众号：肌秘jimi<br>
+            我们将及时为您解决。
+        </div>
     </div>
 </div>
+
 
 <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src='js/tool/fastclick.js'></script>
@@ -88,233 +111,12 @@
 <script src='js/controller/controller.js'></script>
 <script src='js/class/jimiAlert.js'></script>
 <script src='js/city.js'></script>
+<script src='js/app/app.js'></script>
 <script>
     $(function () {
-        if (!window.location.search) {
-            window.location = window.location + '?uid=10002';
-        }
-        window.searchJson = searchJson = (window.location.search.searchToJson());
-
-        FastClick.attach(document.body);
-
-
-        //$jqBtn..................................................................
-        $addressChange = $('.addressChange');
-        $addressSave = $('.addressSave');
-        $addressBack = $('.addressBack');
-        $address = $('.address');
-
-
-        //jqInput............................................................
-        $inputName = $('#inputName');
-        $inputMobile = $('#inputMobile');
-        $selProvince = $('#selProvince');
-        $selCity = $('#selCity');
-        $inputAddress = $('#inputAddress');
-
-
-        //initRouter..........................................................
-        //$jqPage
-        $pageExchange = $('.pageExchange');
-        $pageAddress = $('.pageAddress');
-        Router.$curPage = $pageExchange;
-        Router.init();
-
-
-        //bind省市Data......................................................................
-        bindProvince();
-        $selProvince.change(function () {
-            var a = $(this).val();
-            bindCity(a);
-        })
-
-
-        //initAjax 根据uid判断这个人有没有兑换过....................................
-        controller.check({uid: searchJson.uid}, function (json) {
-            $('#loaded').velocity({opacity: 1}, 'fast');
-
-            if (json.status == 2) {
-                GM.ifExchanged = true;
-                console.log('该用户已领取兑换码');
-                GM.emodel = GM.exchangeModel = json;
-                json.prize = '[EVO]';
-                bindAddress();
-                bindPrizeData(true);
-
-            }
-            else if (json.status == 3) {
-                GM.ifExchanged = false;
-                console.log('该用户未领取兑换码');
-                bindPrizeData(false);
-
-            }
-
-
-            //根据是否兑换字段 判断点击兑换逻辑.................................
-            if (GM.ifExchanged == false) {
-                $('.exchangeBtn').click(function () {
-                    var val = $('.inputBox').val();
-                    if (val == '') {
-                        alert({
-                            alertTxt: "兑换码不能为空",
-                            alertBtn: "返回",
-                        });
-                    } else {
-                        controller.check({ecode: val, uid: searchJson.uid}, function (json) {
-                            if (json.status == 0) {//兑换码出错
-                                alert({
-                                    alertTitle: '兑换失败',
-                                    alertTxt: "兑换失败，无此兑换码",
-                                    alertBtn: "返回",
-                                });
-                            } else if (json.status == 4) {//兑换码已经被兑换
-                                alert({
-                                    alertTitle: '兑换失败',
-                                    alertTxt: "兑换失败，该兑换码已经被领取",
-                                    alertBtn: "返回",
-                                });
-                            } else if (json.status == 1) {
-                                alert({
-                                    alertTitle: '兑换成功',
-                                    alertTxt: "兑换成功，获得【EVO精华乳】一瓶，请先填写收货地址，填写地址后才可领取奖品。发货后我们将在系统内通知您。",
-                                    alertBtn: "填写地址",
-                                });
-                                Router.navigateTo($pageAddress, 'right');
-                                GM.emodel.prize = '[EVO]';
-                                GM.emodel.id = json.id;
-                                $('.addressCon').show();
-                                bindPrizeData(true);
-                            }
-                        })
-                    }
-                });
-            }
-
-
-        });
-
-
-        //bindDataFns..................................................................
-        function bindPrizeData(para1) {//para1
-            if (para1) {
-                $('.prizeContent').html('<div style="text-align: center;color: #444">' + GM.emodel.prize + '</div>');
-                $('.address').html(GM.emodel.address);
-                $('.addressChange').html('修改').css('display', 'inline-block');
-                $('.inputBox').attr('placeholder', GM.emodel.ecode).attr({'disabled': 'disabled'});
-                $('.exchangeBtn').css({'background': '#f4f4f4', color: '#aaa'});
-            }
-            else {
-                $('.prizeContent').html('<img src="img/nodata.jpg" class="nodata" width="80%"/>' +
-                        '<div style="text-align: center;color: #444">暂无获奖记录</div>');
-                $('.addressChange').html('修改').css('display', 'none');
-                $('.inputBox').attr('placeholder', '请输入兑换码').removeAttr("disabled");
-            }
-        }
-
-
-        function bindAddress() {
-            $('.addressCon').show();
-            $inputName.val(GM.emodel.uname);
-            $inputMobile.val(GM.emodel.mobile);
-            $inputAddress.val(GM.emodel.address);
-
-            bindProvince();
-
-            $selProvince.find('option').each(function (i, e) {
-
-                if (GM.emodel.province == $(e).val()) {
-                    $(e).attr('selected', 'selected');
-//                    $(e)[0].setAttribute('selected', 'selected');
-
-                }
-            })
-
-            bindCity(GM.emodel.province);
-            $selCity.find('option').each(function (i, e) {
-                if (GM.emodel.city == $(e).val()) {
-                    $(e).attr('selected', 'selected');
-                }
-            })
-        }
-
-        function bindProvince() {
-            var str = '';
-            [].forEach.call($.cityInfo, function (e, i, arr) {
-                str += '<option value=' + e.n + ' >' + e.n + '</option>'
-            });
-            $selProvince.html(str);
-        }
-
-        function bindCity(provinceName) {
-            var CityArray = _GetCityArrayByProvince(provinceName);
-            var str = '';
-            [].forEach.call(CityArray, function (e, i, arr) {
-                str += '<option value=' + e + ' >' + e + '</option>'
-            });
-            $selCity.html(str);
-
-
-            function _GetCityArrayByProvince(provinceName) {
-                for (i = 0; i < $.cityInfo.length; i++) {
-                    if (provinceName == $.cityInfo[i].n) {
-                        return $.cityInfo[i].c;
-                    }
-                }
-            }
-        }
-
-
-        //bindEvent..................................................................
-        //routerEvent................................................................
-        $addressChange.click(function () {
-            Router.navigateTo($pageAddress, 'right');
-        });
-
-        $addressSave.click(function () {
-            var uname = $inputName.val().trim();
-            var mobile = $inputMobile.val().trim();
-            var address = $inputAddress.val().trim();
-            if (uname == '' || address == '') {
-                alert('输入不能为空');
-                return;
-            }
-
-            else {
-                GM.emodel.uname = uname;
-                GM.emodel.mobile = mobile;
-                GM.emodel.address = address;
-                GM.emodel.province = $selProvince.val();
-                GM.emodel.city = $selCity.val();
-                GM.emodel.address = address;
-
-                $address.html(GM.emodel.address);
-                Router.navigateTo($pageExchange, 'left');
-                controller.postExchangeCodeReceiverInfo({
-                    id: GM.emodel.id,
-                    uid: searchJson.uid,
-                    uname: GM.emodel.uname,
-                    mobile: GM.emodel.mobile,
-                    province: GM.emodel.province,
-                    city: GM.emodel.city,
-                    address: GM.emodel.address,
-                }, function (json) {
-                })
-
-            }
-
-        });
-        $addressBack.click(function () {
-            Router.navigateTo($pageExchange, 'left');
-        });
-
-
-        //键盘弹出 修正...............................
-        var $absoluteBottom = $('.absoluteBottom');
-        $('input').focus(function () {
-            $absoluteBottom.hide();
-        }).blur(function () {
-            $absoluteBottom.show();
-        })
+        $('#loading').fadeOut();
+        $('#loaded').fadeIn();
+        app();
     })
 </script>
 </body>
