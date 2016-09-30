@@ -6,8 +6,8 @@
           content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
     <title>兑换中心</title>
 
-    <link rel="stylesheet" href="css/main.css"/>
     <link rel="stylesheet" href="css/loaderCss/loader.min.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
     <link rel="stylesheet" href="css/page.css"/>
     <link rel="stylesheet" href="css/pageExchange.css"/>
     <link rel="stylesheet" href="css/pageAddress.css"/>
@@ -37,7 +37,6 @@
         <div class='loader-innerText'>loading...</div>
     </div>
 </div>
-
 <div id='loaded' style='display: none;'>
     <div class='page pageExchange'>
         <div class='inputHeader'>
@@ -57,7 +56,8 @@
             <div class='prizeContent'>
             </div>
         </div>
-        <div class='bottomDeclaration absoluteBottom'>声明：每个账号只能兑换一份奖品<br>活动最终解释权归肌秘所有</div>
+        <div class='absoluteBottom'>声明：每个账号只能兑换一份奖品<br>活动最终解释权归肌秘所有</div>
+
     </div>
     <div class='page pageAddress'>
         <div class='addressRow'>
@@ -90,14 +90,11 @@
         <div class='btnRow'>
             <span class='addressBack'>返回</span><span class='addressSave'>保存</span>
         </div>
+        <div class='absoluteBottom'>声明：每个账号只能兑换一份奖品<br>活动最终解释权归肌秘所有</div>
 
-        <div class='addressBottom absoluteBottom'>系统提示发货后地址将不可修改，普通快递不到的偏远地区不发货。<br>
-            如有任何问题请联系微信公众号：肌秘jimi<br>
-            我们将及时为您解决。
-        </div>
+
     </div>
 </div>
-
 
 <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src='js/tool/fastclick.js'></script>
@@ -114,8 +111,6 @@
 <script src='js/app/app.js'></script>
 <script>
     $(function () {
-        $('#loading').fadeOut();
-        $('#loaded').fadeIn();
         app();
     })
 </script>

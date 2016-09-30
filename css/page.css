@@ -14,3 +14,14 @@
 .pageAddress {
     left: 100%;
 }
+
+.absoluteBottom{
+    position: absolute;
+    bottom: 0rem;
+    box-sizing: border-box;
+    padding: 1rem 1.5rem;
+    background-color: #f4f4f4;
+    width: 100%;
+    font-size: 1rem;
+    min-height: 5rem;
+}

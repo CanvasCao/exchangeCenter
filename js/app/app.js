@@ -1,5 +1,4 @@
-
-function app(){
+function app() {
     if (!window.location.search) {
         window.location = window.location + '?uid=10430';
     }
@@ -33,6 +32,7 @@ function app(){
 
     //init bind省市Data......................................................................
     bindProvince();
+    bindCity($selProvince.val());
     $selProvince.change(function () {
         var a = $(this).val();
         bindCity(a);
@@ -41,7 +41,8 @@ function app(){
 
     //initAjax 根据uid判断这个人有没有兑换过....................................
     controller.check({uid: searchJson.uid}, function (json) {
-        $('#loaded').velocity({opacity: 1}, 'fast');
+        $('#loading').hide();
+        $('#loaded').show();
 
         if (json.status == 2) {
             GM.ifExchanged = true;
@@ -110,14 +111,17 @@ function app(){
     //para1 是是否绑定奖品的布尔值
     function bindPrizeData(para1) {
         if (para1) {
-            $('.prizeContent').html( "<div class='prizeSec'>"+
-                "<div class='prizeSecTxt'>"+GM.emodel.prize+
-                "<img src="+GM.emodel.imgUrl+" class='prizeSecImg'/>"+
+            $('.prizeContent').html("<div class='prizeSec'>" +
+                "<div class='prizeSecTxt'>" + GM.emodel.prize +
+                "<img src=" + GM.emodel.imgUrl + " class='prizeSecImg'/>" +
                 "</div></div>");
             $('.address').html(GM.emodel.address);
             $('.addressChange').html('修改').css('display', 'inline-block');
             $('.inputBox').attr('placeholder', GM.emodel.ecode).attr({'disabled': 'disabled'});
             $('.exchangeBtn').css({'background': '#f4f4f4', color: '#aaa'});
+            $('.absoluteBottom').html('系统提示发货后地址将不可修改，普通快递不到的偏远地区不发货。<br>如有任何问题请联系微信公众号：肌秘jimi <br>我们将及时为您解决。');
+
+
         }
         else {
             $('.prizeContent').html('<img src="img/nodata.jpg" class="nodata" width="80%"/>' +
@@ -219,8 +223,8 @@ function app(){
                 uid: searchJson.uid,
                 uname: GM.emodel.uname,
                 mobile: GM.emodel.mobile,
-                province: GM.emodel.province,
-                city: GM.emodel.city,
+                province: GM.emodel.province||'北京市',
+                city: GM.emodel.city||'北京市',
                 address: GM.emodel.address,
             }, function (json) {
             })
